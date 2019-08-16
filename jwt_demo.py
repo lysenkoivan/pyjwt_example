@@ -90,7 +90,7 @@ def auth_token():
             app.config['SECRET'])
         return jsonify({'token': token.decode('utf-8')})
 
-    return jsonify({'Error': 'Could not authorize'})
+    return jsonify({'Error': 'Could not authorize'}), 401
 
 
 if __name__ == "__main__":
