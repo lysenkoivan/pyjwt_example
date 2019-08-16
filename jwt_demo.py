@@ -61,7 +61,7 @@ def is_completed(start, duration):
 def timer_loop(duration):
     start = time.time()
     while not is_completed(start, duration):
-        result = sum(range(2**27))
+        result = sum(range(2 ** 27))
 
 
 @app.route("/protected")
@@ -79,6 +79,18 @@ def auth():
         return jsonify({'token': token.decode('utf-8')})
 
     return make_response("Couldn't authorize", 401, {'WWW-Authenticate': 'Basic realm="Login required"'})
+
+
+@app.route("/auth/token", methods=['GET', 'POST'])
+def auth_token():
+    credentials = request.json
+    if credentials and base64.b64encode(credentials.get('password').encode('utf-8')) == b'cGFzc3dvcmQ=':
+        token = jwt.encode(
+            {'user': credentials.get('login'), 'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=59)},
+            app.config['SECRET'])
+        return jsonify({'token': token.decode('utf-8')})
+
+    return jsonify({'Error': 'Could not authorize'})
 
 
 if __name__ == "__main__":
