@@ -41,6 +41,7 @@ def unprotected():
 def memory_usage(memory):
     memory_usage_temp = bytearray(memory * 1000000)
     sleep = request.args.get('time', 15, int)
+    print(f"Allocaing {memory} Mbs for {sleep}s")
     time.sleep(sleep)
     return jsonify({"message": "Used memory are free!"})
 
@@ -49,6 +50,7 @@ def memory_usage(memory):
 def cpu_usage(core):
     seconds = request.args.get('time', 15, int)
     pool = Pool(core)
+    print(f"Loading cpu with {core} cores")
     pool.map(timer_loop, [seconds])
 
     return jsonify({"message": "Used CPU are free! CPU count is " + str(cpu_count())})
