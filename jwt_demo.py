@@ -77,14 +77,15 @@ def protected():
 
 
 def gen_token(username):
-    token = jwt.encode({
-            'sub': username,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=59),
-            "iat": time.time(),
-            "authorities": ["ROLE_1", "ROLE_2"]
-            },
-            app.config['SECRET'])
-    save_token(username, token)
+    token_data = {
+        'sub': username,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=159),
+        "iat": time.time(),
+        "authorities": ["ROLE_1", "ROLE_2"]
+    }
+    token = jwt.encode(token_data,
+                       app.config['SECRET'])
+    save_token(username, token_data)
     return token
 
 
@@ -108,7 +109,6 @@ def save_token(user, token):
         client = MongoClient(connstr)
         col = client[mdb].auth
         data = {"user": user, "token": token}
-        data.update(jwt.decode(token, app.config['SECRET']))
         col.insert_one(data)
     except OperationFailure as of:
         print(of)
